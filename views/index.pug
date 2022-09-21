@@ -2,12 +2,46 @@ extends layout
 
 block layout-content
   div.View.WelcomeView
-    h1.Banner QResume
+    h1.Banner QResumé
     div.Message
       div.Title
         h3 A Quick and Easy
         h1 Resume for Professionals
       span.Details Access your QR Code!
+    
+    div.Message
+      div.Title
+        h3 Signup for QResumé!
+
+      -data = data || {}
+
+
+      if errors
+          ul.my-errors
+              for error in errors 
+                  li #{error.msg}
+
+      form(action = "." method = "POST" class = 'form-registration')
+          label(for = "name") Name:
+          input(
+              type = "text"
+              id = "name"
+              name = "name"
+              class = "form-control"
+              value = data.name
+          )
+
+          label(for = "email") Email:
+          input(
+              type = "email"
+              id = "email"
+              name = "email"
+              class = "form-control"
+              value = data.email
+          )
+
+          input(type = "submit" value = "Submit" class = "btn btn-lg btn-primary btn-block")
+
     div.NavButtons
       a(href="/user")
           div.NavButton Get started today!
