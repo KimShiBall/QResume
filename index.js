@@ -7,7 +7,7 @@
  const path = require("path");
  const bodyParser = require("body-parser");
  const mongoose = require("mongoose");
- require("./models.Registration");
+ require("./models/Registration");
  require("dotenv").config();
 
 /**
