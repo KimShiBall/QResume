@@ -1,86 +1,77 @@
-// index.js
-
-/**
- * Required External Modules
- */
- const express = require("express");
- const path = require("path");
- const bodyParser = require("body-parser");
- const mongoose = require("mongoose");
- require("./models/Registration");
- require("dotenv").config();
-
-/**
- * App Variables
- */
- const app = express();
- const port = process.env.PORT || "8000";
- const { check, validationResult} = require('express-validator');
- const Registration = mongoose.model("Registration");
-
-/**
- *  App Configuration
- */
- app.engine('pug', require('pug').__express)
-
- app.set("views", path.join(__dirname, "views"));
- app.set("view engine", "pug");
- app.use(express.static("public"));
- app.use(bodyParser.urlencoded({extended : true}));
+const express = require("express");
+const path = require("path");
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+require("dotenv").config();
 
 
- mongoose.connect(process.env.DATABASE, {
-   useNewUrlParser: true,
-   useUnifiedTopology: true
- });
- 
- mongoose.connection
+const app = express();
+const port = process.env.PORT || "8000";
 
-/**
- * Routes Definitions
- */
- //app.get("/", (req, res) => {
- //   res.status(200).send("QResume Testing");
- //});
- app.get("/", (req, res) => {
-    res.render("index", { title: "Home" });
- });
 
- /*app.get("/user", (req, res) => {
-    res.render("user", { title: "Profile", userProfile: { nickname: "Dummy" } });
- });*/
 
- app.post("/",
-   [
-      check('name')
-          .isLength({ min : 1})
-          .withMessage('Please enter a name'),
-      check('email')
-          .isLength({ min : 1})
-          .withMessage('Please enter an email'),
-  ], 
-  (req, res) => {
-          const errors = validationResult(req);
+// mongodb connection
+mongoose.connect(process.env.DATABASE, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+const db = mongoose.connection;
+// mongo error
+db.on('error', console.error.bind(console, 'connection error:'));
 
-          if (errors.isEmpty()){
-              const registration = new Registration(req.body);
-              registration.save()
-              
-          } else{
-              res.render('form', {
-                  title: 'Resgistration form',
-                  errors: errors.array(),
-                  data: req.body,
-              });
-          }   
-   
-   console.log(req.body)
-   res.render("user", {title: "Profile", userProfile: {nickname: req.body.name}});
- });
+// use sessions for tracking logins
+app.use(session({
+  secret: 'i love you',
+  resave: true,
+  saveUninitialized: false,
+  store: new MongoStore({
+    mongooseConnection: db
+  })
+}));
 
-/**
- * Server Activation
- */
- app.listen(port, () => {
-    console.log(`Listening to requests on http://localhost:${port}`);
- });
+// make user ID available in templates
+app.use(function (req, res, next) {
+  res.locals.currentUser = req.session.userId;
+  next();
+});
+
+// parse incoming requests
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// serve static files from /public
+app.use(express.static(__dirname + '/public'));
+
+// view engine setup
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "pug");
+
+//include routes
+const routes = require('./routes/index');
+app.use('/', routes);
+
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  var err = new Error('File Not Found');
+  err.status = 404;
+  next(err);
+});
+
+// error handler
+// define as the last app.use callback
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: {}
+  });
+});
+
+
+// listen on port
+app.listen(port, () => {
+  console.log(`Listening to requests on http://localhost:${port}`);
+});
