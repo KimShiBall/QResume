@@ -13,7 +13,8 @@ a:hover {
 
 .navbar {
 	padding: 1rem 0;
-	background: rgba(0,0,0, .25);
+	background: rgba(0, 0, 0, 0.25);
+	
 }
 .lead {
 	margin-bottom: 2.5rem;
@@ -32,6 +33,9 @@ a:hover {
 
 .nav-items .nav-link {
 	margin: 0 1rem;
+	color: rgb(245, 0, 82);
+	
+	
 }
 .navbar-brand {
 	margin: 0;
@@ -129,6 +133,7 @@ a:hover {
 	.nav-items {
 		padding: 1rem 0;
 		clear: left;
+
 	}
 	.navbar .btn {
 		margin-left: 1rem;
@@ -153,5 +158,11 @@ a:hover {
 	.main {
 		padding-top: 8rem;
 	}
+}
+
+#pdf {
+	min-height: 100vh;
+margin-left: 300px;
+width: calc(100% - 300px);
 }
 
