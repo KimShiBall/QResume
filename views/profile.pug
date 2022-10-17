@@ -1,6 +1,10 @@
 extends layout
 
+
+
 block content
+  - var pdfDirectory = "/PDFs/" + email + ".pdf"
+
   .main.container.clearfix
     .row
       .col-md-8.col-md-offset-2
@@ -8,3 +12,7 @@ block content
           img.avatar.img-circle.hidden-xs-down(src='/images/avatar.jpg', alt='avatar')
           | #{name}
           <embed width="100%" height="100%" name="plugin" id="pdf" src="/PDFs/Stockholm-Resume-Template-Simple.pdf" type="application/pdf">
+          #qrcode
+            button.qr-action(data-qr-action='download')
+            button.qr-action(data-qr-action='copy')
+            a.qr-action(data-qr-action='visit' target='_blank' title='Visit QR Source')
