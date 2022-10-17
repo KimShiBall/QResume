@@ -161,8 +161,9 @@ a:hover {
 }
 
 #pdf {
-	min-height: 100vh;
-margin-left: 300px;
-width: calc(100% - 300px);
+	min-height: 50vh;
+	margin-left: 50px;
+	width: calc(100% - 100px);
+	align-self: center;
 }
 
