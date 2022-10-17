@@ -1,6 +1,10 @@
 extends layout
 
+
+
 block content
+  - var pdfDirectory = "/PDFs/" + email + ".pdf"
+
   .main.container.clearfix
     .row
       .col-md-8.col-md-offset-2

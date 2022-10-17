@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var User = require('../models/user');
 var mid = require('../middleware');
+const bcrypt = require('bcrypt');
 
 // GET /profile
 router.get('/profile', mid.requiresLogin, function(req, res, next) {
@@ -10,7 +11,7 @@ router.get('/profile', mid.requiresLogin, function(req, res, next) {
         if (error) {
           return next(error);
         } else {
-          return res.render('profile', { title: 'Profile', name: user.name });
+          return res.render('profile', { title: 'Profile', name: user.name, email: user.email });
         }
       });
 });
@@ -65,31 +66,51 @@ router.post('/register', function(req, res, next) {
       req.body.name &&
       req.body.password &&
       req.body.confirmPassword) {
-  
+        
+        var emailAlreadyInUse = false;
+
         // confirm that user typed same password twice
         if (req.body.password !== req.body.confirmPassword) {
           var err = new Error('Passwords do not match.');
           err.status = 400;
           return next(err);
         }
-  
-        // create object with form input
-        var userData = {
-          email: req.body.email,
-          name: req.body.name,
-          password: req.body.password
-        };
-  
-        // use schema's `create` method to insert document into Mongo
-        User.create(userData, function (error, user) {
-          if (error) {
-            return next(error);
-          } else {
-            req.session.userId = user._id;
-            return res.redirect('/profile');
-          }
-        });
-  
+
+        User.findOne({ email: req.body.email.toLowerCase() })
+          .exec(function (error, user) {
+            if (error) {
+              return callback(error);
+            } else if ( user != null ) {
+
+              var err = new Error('Email already in use.');
+              err.status = 400;
+              emailAlreadyInUse = true;
+              return next(err);
+            }
+
+            else{
+
+             if(!emailAlreadyInUse){
+                // create object with form input
+                var userData = {
+                  email: req.body.email.toLowerCase(),
+                  name: req.body.name,
+                  password: req.body.password };
+        
+                // use schema's `create` method to insert document into Mongo
+                User.create(userData, function (error, user) {
+                  if (error) {
+                    return next(error);
+                  } else {
+                    req.session.userId = user._id;
+                    return res.redirect('/profile');
+                  }
+                });
+              }
+
+            }
+          });
+
       } else {
         var err = new Error('All fields required.');
         err.status = 400;
