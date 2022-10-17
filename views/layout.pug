@@ -20,4 +20,46 @@ head
     p.foot.text-xs-center A "Stranger Boys" Project
 
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js')
+    script(src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js")
+    script(src='https://kit.fontawesome.com/07afc061fe.js' crossorigin='anonymous')
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js', integrity='sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7', crossorigin='anonymous')
+    script.
+      //qr code script
+      const qrElement = document.getElementById('qrcode');
+
+      //primary url
+      const qrUrl = window.location.href;
+
+      const qrcode = new QRCode(document.getElementById('qrcode'), {
+        text: qrUrl,
+        width: 128,
+        height: 128,
+        colorDark : '#000',
+        colorLight : '#fff',
+        correctLevel : QRCode.CorrectLevel.H
+      });
+
+      const qrActionButtons = Array.from(qrElement.querySelectorAll('.qr-action'));
+
+      qrActionButtons.find(b => b.dataset.qrAction === 'visit').href = qrUrl;
+
+      document.addEventListener('click', e => {
+        if (e.target) {
+          if (qrActionButtons.indexOf(e.target) !== -1) {
+            const button = e.target;
+            const action = button.dataset.qrAction;
+            if (action === 'download') {
+              const a = document.createElement('a');
+              a.download = 'QR-Code.png';
+              a.href = qrElement.querySelector('img').src;
+              console.log(a.href);
+              a.click();
+              a.remove();
+            } else if (action === 'copy') {
+              fetch(qrElement.querySelector('img').src).then(res => res.blob()).then(blob => navigator.clipboard.write([new ClipboardItem({[blob.type]:blob})]));
+            } else if (action === 'visit') {
+              // handled organically
+            }
+          }
+        }
+      });
