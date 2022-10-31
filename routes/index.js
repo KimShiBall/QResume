@@ -1,8 +1,23 @@
 var express = require('express');
 var router = express.Router();
 var User = require('../models/user');
+var imgModel = require('../models/upload');
 var mid = require('../middleware');
+var fs = require('fs');
+var path = require('path');
+const multer = require('multer');
 const bcrypt = require('bcrypt');
+
+//storage handling
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/PDFs')
+  },
+  filename: (req,file,cb) => {
+    cb(null, file.fieldname + '-' + Date.now() + ".jpg") // change file name
+  }
+});
+const upload = multer({ storage: storage });
 
 // GET /profile
 router.get('/profile', mid.requiresLogin, function(req, res, next) {
@@ -33,6 +48,41 @@ router.get('/logout', function(req, res, next) {
 // GET /login
 router.get('/login', mid.loggedOut, function(req, res, next) {
     return res.render('login', { title: 'Log In'});
+});
+
+// GET /uploads
+router.get('/uploads', (req, res) => {
+  imgModel.find({}, (err, items) => {
+    if (err) {
+        console.log(err);
+        res.status(500).send('An error occurred', err);
+    }
+    else {
+        res.render('uploads', { items: items });
+    }
+  });  
+});
+
+// POST /uploads
+router.post('/uploads', upload.single('image'), (req, res, next) => {
+  
+  var obj = {
+      name: req.body.name,
+      desc: req.body.desc,
+      img: {
+          data: fs.readFileSync(path.join(__dirname + '/../public/PDFs/' + req.file.filename)),
+          contentType: 'image/png'
+      }
+  }
+  imgModel.create(obj, (err, item) => {
+      if (err) {
+          console.log(err);
+      }
+      else {
+          // item.save();
+          res.redirect('/uploads');
+      }
+  });
 });
 
 // POST /login
