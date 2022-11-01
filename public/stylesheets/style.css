@@ -162,8 +162,8 @@ a:hover {
 
 #pdf {
 	min-height: 100vh;
-	margin-left: 300px;
-	width: calc(100% - 300px);
+margin-left: 300px;
+width: calc(100% - 300px);
 }
 
 /*qr code stuff*/
