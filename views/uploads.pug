@@ -9,16 +9,16 @@ block content
         div
         form(action='/uploads' method='POST' enctype='multipart/form-data')
             div
-                label(for='name') Image Title
-                input#name(type='text' placeholder='Name' value='' name='name' required='')
-            div
-                label(for='desc') Image Description
-                textarea#desc(name='desc' value='' rows='2' placeholder='Description' required='')
-            div
                 label(for='image') Upload Image
                 input#image(type='file' name='image' value='' required='')
             div
-                button(type='submit') Submit
+                button(type='submit') Submit Image
+        form(action = '/uploads' method='POST' enctype='multipart/form-data')
+            div
+                label(for='image') Upload PDF
+                input#image(type='file' name='image' value='' required='')
+            div
+                button(type='submit') Submit PDF
         hr
         h1 Uploaded Images
         div

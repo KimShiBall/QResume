@@ -8,13 +8,28 @@ var path = require('path');
 const multer = require('multer');
 const bcrypt = require('bcrypt');
 
+
 //storage handling
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/PDFs')
+
+    if(file.originalname.includes(".pdf") || file.originalname.includes(".PDF")){
+      cb(null, 'public/PDFs')
+    }
+    
+    else{
+      cb(null, 'public/images')
+    }
+    
   },
   filename: (req,file,cb) => {
-    cb(null, file.fieldname + '-' + Date.now() + ".jpg") // change file name
+    if(file.originalname.includes(".pdf") || file.originalname.includes(".PDF")){
+      cb(null, req.session.email + ".pdf")
+    }
+    else{
+      cb(null, req.session.email + ".jpg") // change file name
+    }
+    
   }
 });
 const upload = multer({ storage: storage });
@@ -51,7 +66,7 @@ router.get('/login', mid.loggedOut, function(req, res, next) {
 });
 
 // GET /uploads
-router.get('/uploads', (req, res) => {
+router.get('/uploads', mid.requiresLogin, (req, res) => {
   imgModel.find({}, (err, items) => {
     if (err) {
         console.log(err);
@@ -65,15 +80,22 @@ router.get('/uploads', (req, res) => {
 
 // POST /uploads
 router.post('/uploads', upload.single('image'), (req, res, next) => {
-  
+
+  userEmail = req.session.email;
+
   var obj = {
-      name: req.body.name,
-      desc: req.body.desc,
-      img: {
-          data: fs.readFileSync(path.join(__dirname + '/../public/PDFs/' + req.file.filename)),
-          contentType: 'image/png'
-      }
+    name: userEmail,
+    img: {
+        data: fs.readFileSync(path.join(__dirname + '/../public/images/' + userEmail + ".jpg")),
+        contentType: 'image/png'
+    },
+    pdf: {
+        data: fs.readFileSync(path.join(__dirname + "/../public/PDFs/" + userEmail + ".pdf")),
+        contentType: 'PDF'
+    }
   }
+
+
   imgModel.create(obj, (err, item) => {
       if (err) {
           console.log(err);
@@ -83,6 +105,7 @@ router.post('/uploads', upload.single('image'), (req, res, next) => {
           res.redirect('/uploads');
       }
   });
+ 
 });
 
 // POST /login
@@ -95,6 +118,7 @@ router.post('/login', function(req, res, next) {
           return next(err);
         }  else {
           req.session.userId = user._id;
+          req.session.email = user.email;
           return res.redirect('/profile');
         }
       });
@@ -153,6 +177,7 @@ router.post('/register', function(req, res, next) {
                     return next(error);
                   } else {
                     req.session.userId = user._id;
+                    req.session.userEmail = user.email;
                     return res.redirect('/profile');
                   }
                 });

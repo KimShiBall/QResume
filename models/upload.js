@@ -7,6 +7,12 @@ var imageSchema = new mongoose.Schema({
     {
         data: Buffer,
         contentType: String
+    },
+
+    pdf:
+    {
+        data: Buffer,
+        contentType: String
     }
 });
   
