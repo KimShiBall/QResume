@@ -73,7 +73,7 @@ router.get('/uploads', mid.requiresLogin, (req, res) => {
         res.status(500).send('An error occurred', err);
     }
     else {
-        res.render('uploads', { items: items });
+        res.render('uploads', { items: items, email: req.session.email });
     }
   });  
 });
@@ -81,9 +81,7 @@ router.get('/uploads', mid.requiresLogin, (req, res) => {
 // POST /uploads
 router.post('/uploads', upload.single('image'), (req, res, next) => {
 
-  userEmail = req.session.email;
-
-  var obj = {
+  /*var obj = {
     name: userEmail,
     img: {
         data: fs.readFileSync(path.join(__dirname + '/../public/images/' + userEmail + ".jpg")),
@@ -104,7 +102,8 @@ router.post('/uploads', upload.single('image'), (req, res, next) => {
           // item.save();
           res.redirect('/uploads');
       }
-  });
+  });*/
+  return res.render('uploads', {email: req.session.email})
  
 });
 
@@ -195,17 +194,37 @@ router.post('/register', function(req, res, next) {
 
 // GET /
 router.get('/', function(req, res, next) {
+  if(req.session != null){
+    return res.render('index', {title: 'Home', email: req.session.email})
+  } 
+  
+  else{
     return res.render('index', { title: 'Home' });
+  }
+  
 });
 
 // GET /about
 router.get('/about', function(req, res, next) {
+  if(req.session != null){
+    return res.render('about', {title: 'About', email: req.session.email})
+  }  
+  else{
     return res.render('about', { title: 'About' });
+  }
+  
   });
   
 // GET /contact
 router.get('/contact', function(req, res, next) {
+  if(req.session != null){
+    return res.render('contact', {title: 'Contact', email:req.session.email})
+  } 
+  
+  else{
     return res.render('contact', { title: 'Contact' });
+  }
+  
 });
   
 module.exports = router;
