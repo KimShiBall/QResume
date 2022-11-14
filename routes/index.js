@@ -41,6 +41,18 @@ router.get('/profile', mid.requiresLogin, function(req, res, next) {
         if (error) {
           return next(error);
         } else {
+          //return res.render('profile', { title: 'Profile', name: user.name, email: user.email });
+          return res.redirect('/profile/' + user.email);
+        }
+      });
+});
+
+router.get('/profile/:email', function (req, res) {
+  User.findById(req.session.userId)
+      .exec(function (error, user) {
+        if (error) {
+          return next(error);
+        } else {
           return res.render('profile', { title: 'Profile', name: user.name, email: user.email });
         }
       });
