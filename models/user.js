@@ -19,6 +19,30 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+
+    github:{
+      type: String
+    },
+
+    linkedin:{
+        type: String
+    },
+
+    handshake:{
+        type: String
+    },
+
+    facebook:{
+        type: String
+    },
+
+    twitter:{
+        type: String
+    },
+
+    instagram:{
+        type: String
+    }
 });
 
 // authenticate input against database documents

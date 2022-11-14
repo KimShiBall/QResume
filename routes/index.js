@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var User = require('../models/user');
-var imgModel = require('../models/upload');
 var mid = require('../middleware');
 var fs = require('fs');
 var path = require('path');
@@ -67,44 +66,12 @@ router.get('/login', mid.loggedOut, function(req, res, next) {
 
 // GET /uploads
 router.get('/uploads', mid.requiresLogin, (req, res) => {
-  imgModel.find({}, (err, items) => {
-    if (err) {
-        console.log(err);
-        res.status(500).send('An error occurred', err);
-    }
-    else {
-        res.render('uploads', { items: items, email: req.session.email });
-    }
-  });  
+    res.render('uploads', { email: req.session.email });
 });
 
 // POST /uploads
 router.post('/uploads', upload.single('image'), (req, res, next) => {
-
-  /*var obj = {
-    name: userEmail,
-    img: {
-        data: fs.readFileSync(path.join(__dirname + '/../public/images/' + userEmail + ".jpg")),
-        contentType: 'image/png'
-    },
-    pdf: {
-        data: fs.readFileSync(path.join(__dirname + "/../public/PDFs/" + userEmail + ".pdf")),
-        contentType: 'PDF'
-    }
-  }
-
-
-  imgModel.create(obj, (err, item) => {
-      if (err) {
-          console.log(err);
-      }
-      else {
-          // item.save();
-          res.redirect('/uploads');
-      }
-  });*/
   return res.render('uploads', {email: req.session.email})
- 
 });
 
 // POST /login
@@ -168,7 +135,13 @@ router.post('/register', function(req, res, next) {
                 var userData = {
                   email: req.body.email.toLowerCase(),
                   name: req.body.name,
-                  password: req.body.password };
+                  password: req.body.password,
+                  github: "",
+                  linkedin: "",
+                  handshake: "",
+                  facebook: "",
+                  twitter: "",
+                  instagram: "" };
         
                 // use schema's `create` method to insert document into Mongo
                 User.create(userData, function (error, user) {
