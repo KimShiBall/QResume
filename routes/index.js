@@ -40,7 +40,24 @@ router.get('/profile', mid.requiresLogin, function(req, res, next) {
         if (error) {
           return next(error);
         } else {
-          return res.render('profile', { title: 'Profile', name: user.name, email: user.email });
+          //return res.render('profile', { title: 'Profile', name: user.name, email: user.email });
+          return res.redirect('/profile/' + user.email);
+        }
+      });
+});
+
+router.get('/profile/:email', function (req, res) {
+  User.findById(req.session.userId)
+      .exec(function (error, user) {
+        if (error) {
+          return next(error);
+        } else {
+          
+          req.session.profilePic = getProfilePicture(user);
+          req.session.pdfName = getPDF(user);
+
+          return res.render('profile', { title: 'Profile', name: user.name, email: user.email, 
+          profilePic: req.session.profilePic, pdfName: req.session.pdfName });
         }
       });
 });
@@ -66,13 +83,38 @@ router.get('/login', mid.loggedOut, function(req, res, next) {
 
 // GET /uploads
 router.get('/uploads', mid.requiresLogin, (req, res) => {
-    res.render('uploads', { email: req.session.email });
+    res.render('uploads', { email: req.session.email, profilePic: req.session.profilePic, pdfName: req.session.pdfName});
 });
 
 // POST /uploads
 router.post('/uploads', upload.single('image'), (req, res, next) => {
-  return res.render('uploads', {email: req.session.email})
+  return res.render('uploads', {email: req.session.email, profilePic: req.session.profilePic, pdfName: req.session.pdfName})
 });
+
+// POST /update
+router.post('/update', (req, res, next) => {
+
+  var userData = {
+    github: req.body.github,
+    linkedin: req.body.linkedin,
+    handshake: req.body.handshake,
+    facebook: req.body.facebook,
+    twitter: req.body.twitter,
+    instagram: req.body.instagram };
+  
+  User.findOneAndUpdate({email: req.session.email}, userData)
+    .exec(function(error, user){
+      if(error){
+
+      }
+
+      else{
+        
+      }
+    })
+
+    return res.render('uploads', {email: req.session.email, profilePic: req.session.profilePic, pdfName: req.session.pdfName})
+})
 
 // POST /login
 router.post('/login', function(req, res, next) {
@@ -85,6 +127,8 @@ router.post('/login', function(req, res, next) {
         }  else {
           req.session.userId = user._id;
           req.session.email = user.email;
+          req.session.profilePic = getProfilePicture(user);
+          req.session.pdfName = getPDF(user);
           return res.redirect('/profile');
         }
       });
@@ -150,6 +194,9 @@ router.post('/register', function(req, res, next) {
                   } else {
                     req.session.userId = user._id;
                     req.session.userEmail = user.email;
+                    req.session.profilePic = getProfilePicture(user);
+                    req.session.pdfName = getPDF(user);
+
                     return res.redirect('/profile');
                   }
                 });
@@ -168,7 +215,7 @@ router.post('/register', function(req, res, next) {
 // GET /
 router.get('/', function(req, res, next) {
   if(req.session != null){
-    return res.render('index', {title: 'Home', email: req.session.email})
+    return res.render('index', {title: 'Home', email: req.session.email, profilePic: req.session.profilePic})
   } 
   
   else{
@@ -180,7 +227,7 @@ router.get('/', function(req, res, next) {
 // GET /about
 router.get('/about', function(req, res, next) {
   if(req.session != null){
-    return res.render('about', {title: 'About', email: req.session.email})
+    return res.render('about', {title: 'About', email: req.session.email, profilePic: req.session.profilePic})
   }  
   else{
     return res.render('about', { title: 'About' });
@@ -191,7 +238,7 @@ router.get('/about', function(req, res, next) {
 // GET /contact
 router.get('/contact', function(req, res, next) {
   if(req.session != null){
-    return res.render('contact', {title: 'Contact', email:req.session.email})
+    return res.render('contact', {title: 'Contact', email:req.session.email, profilePic: req.session.profilePic})
   } 
   
   else{
@@ -199,5 +246,38 @@ router.get('/contact', function(req, res, next) {
   }
   
 });
+
+function getProfilePicture(user){
+  
+  try{
+
+    if(fs.existsSync(path.join(__dirname + '/../public/images/' + user.email + ".jpg"))){ 
+      return user.email;
+     }
+
+     else{
+      return "avatar";
+     }
+
+  }catch(err){
+    return next(err);
+  }
+
+}
+
+function getPDF(user){
+    try{
+      if(fs.existsSync(path.join(__dirname + '/../public/PDFs/' + user.email + ".pdf"))){
+          return user.email;
+        }
+
+        else{
+          return "Default";
+        }
+
+    }catch(err){
+      
+    }
+}
   
 module.exports = router;
