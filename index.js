@@ -11,7 +11,6 @@ const app = express();
 const port = process.env.PORT || "8000";
 
 
-
 // mongodb connection
 mongoose.connect(process.env.DATABASE, {
   useNewUrlParser: true,

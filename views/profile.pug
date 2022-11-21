@@ -3,11 +3,13 @@ extends layout
 
 
 block content
-  - var pdfDirectory = "/PDFs/" + email + ".pdf"
+  - var profilePictureDirectory = "/images/" + profilePic + ".jpg"
+  - var pdfDirectory = "/PDFs/" + pdfName + ".pdf"
 
   .main.container.clearfix
     .row
-      h1.display-4
+      .col-md-8.col-md-offset-2
+       h1.display-4
         img.avatar.img-circle.hidden-xs-down(src='/images/avatar.jpg', alt='avatar')
         | #{name}
       
