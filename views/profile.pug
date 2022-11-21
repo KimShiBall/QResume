@@ -9,11 +9,32 @@ block content
   .main.container.clearfix
     .row
       .col-md-8.col-md-offset-2
-        h1.display-4
-          img.avatar.img-circle.hidden-xs-down(src= profilePictureDirectory, alt='avatar')
-          | #{name}
-          <embed width="100%" height="100%" name="plugin" id="pdf" src= #{pdfDirectory} type="application/pdf">
-          #qrcode
-            button.qr-action(data-qr-action='download')
-            button.qr-action(data-qr-action='copy')
-            a.qr-action(data-qr-action='visit' target='_blank' title='Visit QR Source')
+       h1.display-4
+        img.avatar.img-circle.hidden-xs-down(src='/images/avatar.jpg', alt='avatar')
+        | #{name}
+      
+       
+
+    div(class="View")
+      div(id = "qrcode")
+          button.qr-action(data-qr-action='download')
+          button.qr-action(data-qr-action='copy')
+          a.qr-action(data-qr-action='visit' target='_blank' title='Visit QR Source')
+    
+      div(class="logo_row")
+        a(href="https://www.qries.com/") 
+          <img id="logo_link" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png">
+        a(href="https://www.qries.com/") 
+          <img id="logo_link" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png">
+        a(href="https://www.qries.com/") 
+          <img id="logo_link" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png">
+        a(href="https://www.qries.com/") 
+          <img id="logo_link" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png">  
+    
+
+      div.profile
+        <embed width="100%" height="100%" name="plugin" id="pdf" src= #{pdfDirectory} type="application/pdf">
+      
+          
+            
+                

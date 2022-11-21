@@ -2,7 +2,9 @@
 
 body {
 	background: #1d2a33 url('../images/darktech.jpg') no-repeat;
-	background-size: cover; 
+	background-size:cover;
+	background-repeat: repeat; 
+	
 }
 
 a:hover {
@@ -22,6 +24,7 @@ a:hover {
 .main {
 	color: #fff;
 	min-height: calc(100vh - 34px);
+	
 }
 .foot {
 	font-size: .85rem;
@@ -34,8 +37,6 @@ a:hover {
 .nav-items .nav-link {
 	margin: 0 1rem;
 	color: rgb(245, 0, 82);
-	
-	
 }
 .navbar-brand {
 	margin: 0;
@@ -52,6 +53,47 @@ a:hover {
 	font-size: .88rem;
 	vertical-align: top;
 	margin: 3px 0 0 4px;
+}
+
+.View {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    
+    align-items:center;
+  
+    height:180vw;
+    width: 100%;
+  
+    padding: 20px;
+    align-self: center;
+
+    background-size: cover;
+}
+.logo_row{
+	flex: 1;
+	flex-direction: row;
+	
+}
+
+#logo_link{
+	width: 15vw;
+	height: 15vw;
+	padding: 1vw;
+	
+}
+
+#pdf {
+	padding-top: 0%;
+	padding:1%;
+	min-height:50rem;
+	width:65vw;
+	}
+div.profile{
+	width: 70vw;
+	height: 140vw;
+	padding-top: 0%;
+	padding: 1%;
 }
 
 /* Button Styles */
@@ -160,12 +202,6 @@ a:hover {
 	}
 }
 
-#pdf {
-	min-height: 100vh;
-margin-left: 300px;
-width: calc(100% - 300px);
-}
-
 /*qr code stuff*/
 :root {
 	--theme-color: rgb(0, 238, 255);
@@ -175,28 +211,27 @@ width: calc(100% - 300px);
   html, body {
 	height: 100%;
 	margin: 0;
-	overflow: hidden;
+	overflow:visible;
   }
   body {
 	background-color: var(--theme-color);
   }
   #qrcode {
-	position: absolute;
-	top: 50%;
-	left: 25%;
-	transform: translate(-50%,-50%)
-  }
-  #qrcode {
 	background-color: inherit;
 	transition: all 0.15s ease-out;
+	position:sticky;
+	/* top: 50%;
+	left: 25%; 
+	transform: translate(-50%,-50%); */
+	align-self: center;
   }
+ 
   #qrcode::before {
-	content: '';
-	display: block;
+	display:contents;
 	width: var(--trace-size);
 	height: var(--trace-size);
-	position: absolute;
-	background-color: #f00;
+	position:relative;
+	background-color: rgb(255, 0, 0);
 	border-radius: 20%;
 	animation: 2s ease-in-out 1s infinite normal both qr-trace;
 	transition: inherit;
@@ -206,6 +241,7 @@ width: calc(100% - 300px);
 	mix-blend-mode: darken;
 	image-rendering: pixelated;
 	transition: inherit;
+	align-self: start;
   }
   #qrcode .qr-action {
 	display: block;
