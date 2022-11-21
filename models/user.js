@@ -42,6 +42,14 @@ const UserSchema = new mongoose.Schema({
 
     instagram:{
         type: String
+    },
+
+    youtube:{
+        type: String
+    },
+
+    reddit:{
+        type: String
     }
 });
 

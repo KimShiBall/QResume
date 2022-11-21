@@ -83,6 +83,14 @@ a:hover {
 	
 }
 
+#grayout {
+    width: 15vw;
+    height: 15vw;
+    padding: 1vw;
+    opacity: 0.4;
+    filter: alpha(opacity=40); /* msie */
+}
+
 #pdf {
 	padding-top: 0%;
 	padding:1%;
