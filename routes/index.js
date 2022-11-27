@@ -57,7 +57,7 @@ router.get('/profile/:email', function (req, res) {
           req.session.pdfName = getPDF(user);
 
           return res.render('profile', { title: 'Profile', name: user.name, email: user.email, 
-          profilePic: req.session.profilePic, pdfName: req.session.pdfName });
+          profilePic: req.session.profilePic, pdfName: req.session.pdfName, links: getUserLinks(user), linkColor: logoColoring(user) });
         }
       });
 });
@@ -83,12 +83,12 @@ router.get('/login', mid.loggedOut, function(req, res, next) {
 
 // GET /uploads
 router.get('/uploads', mid.requiresLogin, (req, res) => {
-    res.render('uploads', { email: req.session.email, profilePic: req.session.profilePic, pdfName: req.session.pdfName});
+    res.render('uploads', {title: "Upload", email: req.session.email, profilePic: req.session.profilePic, pdfName: req.session.pdfName});
 });
 
 // POST /uploads
 router.post('/uploads', upload.single('image'), (req, res, next) => {
-  return res.render('uploads', {email: req.session.email, profilePic: req.session.profilePic, pdfName: req.session.pdfName})
+  return res.render('uploads', {title: "Upload", email: req.session.email, profilePic: req.session.profilePic, pdfName: req.session.pdfName})
 });
 
 // POST /update
@@ -100,7 +100,9 @@ router.post('/update', (req, res, next) => {
     handshake: req.body.handshake,
     facebook: req.body.facebook,
     twitter: req.body.twitter,
-    instagram: req.body.instagram };
+    instagram: req.body.instagram,
+    youtube: req.body.youtube,
+    reddit: req.body.reddit };
   
   User.findOneAndUpdate({email: req.session.email}, userData)
     .exec(function(error, user){
@@ -113,7 +115,7 @@ router.post('/update', (req, res, next) => {
       }
     })
 
-    return res.render('uploads', {email: req.session.email, profilePic: req.session.profilePic, pdfName: req.session.pdfName})
+    return res.render('uploads', {title: "Upload", email: req.session.email, profilePic: req.session.profilePic, pdfName: req.session.pdfName})
 })
 
 // POST /login
@@ -185,7 +187,9 @@ router.post('/register', function(req, res, next) {
                   handshake: "",
                   facebook: "",
                   twitter: "",
-                  instagram: "" };
+                  instagram: "",
+                  youtube: "",
+                  reddit: "" };
         
                 // use schema's `create` method to insert document into Mongo
                 User.create(userData, function (error, user) {
@@ -278,6 +282,111 @@ function getPDF(user){
     }catch(err){
       
     }
+}
+
+function getUserLinks(user){
+  var links = {
+    github: user.github,
+    linkedin: user.linkedin,
+    handshake: user.handshake,
+    facebook: user.facebook,
+    twitter: user.twitter,
+    instagram: user.instagram,
+    youtube: user.youtube,
+    reddit: user.reddit
+  }
+
+  return links;
+}
+
+function logoColoring(links){
+  var grayedOut = "grayout";
+  var colored = "logo_link";
+
+  var linkColor = {
+      github: "",
+      linkedin: "",
+      handshake: "",
+      facebook: "",
+      twitter: "",
+      instagram: "",
+      youtube: "",
+      reddit: ""
+  }
+  
+
+  if(links.github != ""){
+    linkColor.github = colored;
+  }
+
+  else{
+    linkColor.github = grayedOut
+  }
+
+
+  if(links.linkedin != ""){
+    linkColor.linkedin = colored;
+  }
+
+  else{
+    linkColor.linkedin = grayedOut
+  }
+
+
+  if(links.handshake != ""){
+    linkColor.handshake = colored;
+  }
+
+  else{
+    linkColor.handshake = grayedOut
+  }
+
+
+  if(links.facebook != ""){
+    linkColor.facebook = colored;
+  }
+
+  else{
+    linkColor.facebook = grayedOut
+  }
+
+
+  if(links.twitter != ""){
+    linkColor.twitter = colored;
+  }
+
+  else{
+    linkColor.twitter = grayedOut
+  }
+
+
+  if(links.instagram != ""){
+    linkColor.instagram = colored;
+  }
+
+  else{
+    linkColor.instagram = grayedOut
+  }
+
+
+  if(links.youtube != ""){
+    linkColor.youtube = colored;
+  }
+
+  else{
+    linkColor.youtube = grayedOut
+  }
+
+
+  if(links.reddit != ""){
+    linkColor.reddit = colored;
+  }
+
+  else{
+    linkColor.reddit = grayedOut
+  }
+
+  return linkColor;
 }
   
 module.exports = router;

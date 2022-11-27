@@ -12,42 +12,42 @@ block content
                 label(for='image') Upload Image
                 input#image(type='file' name='image' value='' required='')
             div
-                button(type='submit') Submit Image
+                button.btn.btn-info-outline.btn-lg.m-t-1(type='submit') Submit Image
         form(action = '/uploads' method='POST' enctype='multipart/form-data')
             div
                 label(for='image') Upload PDF
                 input#image(type='file' name='image' value='' required='')
             div
-                button(type='submit') Submit PDF
+                button.btn.btn-info-outline.btn-lg.m-t-1(type='submit') Submit PDF
         h1.display-4.m-b-2 Update Links
         form(action='/update' method='POST')
             div
                 label(for='github') Github
-                input(type='link' name='github')
+                input#name.form-control(type='link' name='github')
             div
                 label(for='linkedin') LinkedIn
-                input(type='link' name='linkedin')
+                input#name.form-control(type='link' name='linkedin')
             div
                 label(for='handshake') Handshake
-                input(type='link' name='handshake')
+                input#name.form-control(type='link' name='handshake')
             div
                 label(for='Facebook') Facebook
-                input(type='link' name='facebook')
+                input#name.form-control(type='link' name='facebook')
             div
                 label(for='Twitter') Twitter
-                input(type='link' name='twitter')
+                input#name.form-control(type='link' name='twitter')
             div
                 label(for='instagram') Instagram
-                input(type='link' name='instagram')
+                input#name.form-control(type='link' name='instagram')
             div
                 label(for='youtube') Youtube
-                input(type='link' name='youtube')
+                input#name.form-control(type='link' name='youtube')
             div
                 label(for='reddit') Reddit
-                input(type='link' name='reddit')
+                input#name.form-control(type='link' name='reddit')
 
             div
-                button(type='submit' method='POST') Update
+                button.btn.btn-info-outline.btn-lg.m-t-1(type='submit' method='POST') Update
         hr
           
 
