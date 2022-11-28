@@ -17,7 +17,8 @@ Open another terminal, then run "npm run ui".
 
 ## Bugs
 
-TBD
+Not being able to generate unique QRcode
+
 
 ## Sources
 
