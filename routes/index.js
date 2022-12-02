@@ -9,6 +9,8 @@ const bcrypt = require('bcrypt');
 
 
 //storage handling
+//Depending on the file extension, it needs to place them in certain directories
+//and updates the file name appropriately
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
 
@@ -21,6 +23,7 @@ const storage = multer.diskStorage({
     }
     
   },
+
   filename: (req,file,cb) => {
     if(file.originalname.includes(".pdf") || file.originalname.includes(".PDF")){
       cb(null, req.session.email + ".pdf")
@@ -40,24 +43,12 @@ router.get('/profile', mid.requiresLogin, function(req, res, next) {
         if (error) {
           return next(error);
         } else {
-          //return res.render('profile', { title: 'Profile', name: user.name, email: user.email });
-          return res.redirect('/profile/' + user.email);
-        }
-      });
-});
 
-router.get('/profile/:email', function (req, res) {
-  User.findById(req.session.userId)
-      .exec(function (error, user) {
-        if (error) {
-          return next(error);
-        } else {
-          
           req.session.profilePic = getProfilePicture(user);
           req.session.pdfName = getPDF(user);
 
           return res.render('profile', { title: 'Profile', name: user.name, email: user.email, 
-          profilePic: req.session.profilePic, pdfName: req.session.pdfName, links: getUserLinks(user), linkColor: logoColoring(user) });
+          profilePic: req.session.profilePic, pdfName: req.session.pdfName, links: getUserLinks(user), linkColor: logoColoring(getUserLinks(user)) });
         }
       });
 });
@@ -94,26 +85,34 @@ router.post('/uploads', upload.single('image'), (req, res, next) => {
 // POST /update
 router.post('/update', (req, res, next) => {
 
-  var userData = {
-    github: req.body.github,
-    linkedin: req.body.linkedin,
-    handshake: req.body.handshake,
-    facebook: req.body.facebook,
-    twitter: req.body.twitter,
-    instagram: req.body.instagram,
-    youtube: req.body.youtube,
-    reddit: req.body.reddit };
-  
-  User.findOneAndUpdate({email: req.session.email}, userData)
+  var userData;
+
+  //Find the user
+  User.findOne({email: req.session.email})
     .exec(function(error, user){
       if(error){
 
       }
 
       else{
+        //Then update the user's links
+        userData = updateUserLinks(user, req);
+
+        //Then replace the existing links with the new links
+        User.findOneAndUpdate({email: req.session.email}, userData)
+        .exec(function(error, user){
+          if(error){
+
+          }
+
+          else{
         
+          }
+        })
       }
     })
+  
+  
 
     return res.render('uploads', {title: "Upload", email: req.session.email, profilePic: req.session.profilePic, pdfName: req.session.pdfName})
 })
@@ -162,6 +161,7 @@ router.post('/register', function(req, res, next) {
           return next(err);
         }
 
+        //Ensure that the email hasn't already been used
         User.findOne({ email: req.body.email.toLowerCase() })
           .exec(function (error, user) {
             if (error) {
@@ -251,6 +251,8 @@ router.get('/contact', function(req, res, next) {
   
 });
 
+//Checks if the current user has a profile picture, if they do it returns the user's email.
+//Otherwise, it returns the default profile picutre.
 function getProfilePicture(user){
   
   try{
@@ -269,6 +271,8 @@ function getProfilePicture(user){
 
 }
 
+//Checks if the current user has a pdf, if they do it returns the user's email.
+//Otherwise, it returns the default pdf's name
 function getPDF(user){
     try{
       if(fs.existsSync(path.join(__dirname + '/../public/PDFs/' + user.email + ".pdf"))){
@@ -284,6 +288,47 @@ function getPDF(user){
     }
 }
 
+//Called when the user presses the update button on the uploads page.
+//Only updates links that have strings and returns the list of strings, including unchanged strings.
+function updateUserLinks(user, req){
+  var links = getUserLinks(user);
+
+  if(req.body.github != ""){
+    links.github = req.body.github
+  }
+
+  if(req.body.linkedin != ""){
+    links.linkedin = req.body.linkedin
+  }
+
+  if(req.body.handshake != ""){
+    links.handshake = req.body.handshake
+  }
+
+  if(req.body.facebook != ""){
+    links.facebook = req.body.facebook
+  }
+
+  if(req.body.twitter != ""){
+    links.twitter = req.body.twitter
+  }
+
+  if(req.body.instagram != ""){
+    links.instagram = req.body.instagram
+  }
+
+  if(req.body.youtube != ""){
+    links.youtube = req.body.youtube
+  }
+
+  if(req.body.reddit != ""){
+    links.reddit = req.body.reddit
+  }
+
+  return links
+}
+
+//Grabs all of the links of the current user
 function getUserLinks(user){
   var links = {
     github: user.github,
@@ -299,6 +344,7 @@ function getUserLinks(user){
   return links;
 }
 
+//Used to determine whether the link blocks on the profile page should be fully colored or grayed out.
 function logoColoring(links){
   var grayedOut = "grayout";
   var colored = "logo_link";
